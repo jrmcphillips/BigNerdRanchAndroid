@@ -5,19 +5,20 @@ import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.util.Log;
 
 public class QuizActivity extends Activity {
 
 	private Button mTrueButton;
 	private Button mFalseButton;
-	private Button mNextButton;
-	private Button mPreviousButton;
+	private ImageButton mNextButton;
+	private ImageButton mPreviousButton;
 	private TextView mQuestionTextView;
 
 	private List<TrueFalse> mQuestionBank;
@@ -40,8 +41,8 @@ public class QuizActivity extends Activity {
 
 		mTrueButton = (Button) findViewById(R.id.true_button);
 		mFalseButton = (Button) findViewById(R.id.false_button);
-		mNextButton = (Button) findViewById(R.id.next_button);
-		mPreviousButton = (Button) findViewById(R.id.previous_button);
+		mNextButton = (ImageButton) findViewById(R.id.next_button);
+		mPreviousButton = (ImageButton) findViewById(R.id.previous_button);
 		mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
 		mTrueButton.setOnClickListener(new View.OnClickListener() {
