@@ -17,6 +17,7 @@ public class QuizActivity extends Activity {
 	private Button mTrueButton;
 	private Button mFalseButton;
 	private Button mNextButton;
+	private Button mPreviousButton;
 	private TextView mQuestionTextView;
 
 	private List<TrueFalse> mQuestionBank;
@@ -40,6 +41,7 @@ public class QuizActivity extends Activity {
 		mTrueButton = (Button) findViewById(R.id.true_button);
 		mFalseButton = (Button) findViewById(R.id.false_button);
 		mNextButton = (Button) findViewById(R.id.next_button);
+		mPreviousButton = (Button) findViewById(R.id.previous_button);
 		mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
 
 		mTrueButton.setOnClickListener(new View.OnClickListener() {
@@ -59,22 +61,38 @@ public class QuizActivity extends Activity {
 		mNextButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				updateQuestion();
+				nextQuestion();
+			}
+		});
+
+		mPreviousButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				previousQuestion();
 			}
 		});
 
 		mQuestionTextView.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				updateQuestion();
+				nextQuestion();
 			}
 		});
 
 		updateQuestion();
 	}
 
-	void updateQuestion() {
+	void nextQuestion() {
 		mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size();
+		updateQuestion();
+	}
+
+	void previousQuestion() {
+		mCurrentIndex = (mCurrentIndex + mQuestionBank.size() - 1) % mQuestionBank.size();
+		updateQuestion();
+	}
+	
+	void updateQuestion() {
 		Log.i(getClass().getSimpleName(), mCurrentIndex + "");
 		mCurrentQuestion = mQuestionBank.get(mCurrentIndex);
 		mQuestionTextView.setText(mCurrentQuestion.getQuestion());
