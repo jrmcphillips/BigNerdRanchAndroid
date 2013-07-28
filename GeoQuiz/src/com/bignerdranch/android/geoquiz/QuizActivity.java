@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class QuizActivity extends Activity {
+	
+	private static final String CURRENT_INDEX_KEY = "currentIndex";
 
 	private Button mTrueButton;
 	private Button mFalseButton;
@@ -37,6 +39,7 @@ public class QuizActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		logDebug("onCreate()");
 		setContentView(R.layout.activity_quiz);
 
 		mTrueButton = (Button) findViewById(R.id.true_button);
@@ -59,17 +62,17 @@ public class QuizActivity extends Activity {
 			}
 		});
 
-		mNextButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				nextQuestion();
-			}
-		});
-
 		mPreviousButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				previousQuestion();
+			}
+		});
+
+		mNextButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				nextQuestion();
 			}
 		});
 
@@ -80,6 +83,22 @@ public class QuizActivity extends Activity {
 			}
 		});
 
+		updateQuestion();
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		logDebug("onSaveInstanceState(Bundle)");
+		super.onSaveInstanceState(outState);
+		logDebug("mCurrentIndex: " + mCurrentIndex);
+		outState.putInt(CURRENT_INDEX_KEY, mCurrentIndex);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		logDebug("onRestoreInstanceState(Bundle)");
+		super.onRestoreInstanceState(savedInstanceState);
+		mCurrentIndex = savedInstanceState.getInt(CURRENT_INDEX_KEY, 0);
 		updateQuestion();
 	}
 
@@ -94,7 +113,7 @@ public class QuizActivity extends Activity {
 	}
 	
 	void updateQuestion() {
-		Log.i(getClass().getSimpleName(), mCurrentIndex + "");
+		logDebug("mCurrentIndex: " + mCurrentIndex);
 		mCurrentQuestion = mQuestionBank.get(mCurrentIndex);
 		mQuestionTextView.setText(mCurrentQuestion.getQuestion());
 	}
@@ -114,9 +133,52 @@ public class QuizActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		logDebug("onCreateOptionsMenu(Menu)");
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.quiz, menu);
 		return true;
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		logDebug("onStart()");
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		logDebug("onPause()");
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		logDebug("onResume()");
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
+		logDebug("onStop()");
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		logDebug("onDestroy()");
+	}
+	
+	public void logInfo(String message) {
+		Log.i(getTag(), message);
+	}
+	
+	public void logDebug(String message) {
+		Log.d(getTag(), message);
+	}
+	
+	public String getTag() {
+		return getClass().getSimpleName();
 	}
 
 }
