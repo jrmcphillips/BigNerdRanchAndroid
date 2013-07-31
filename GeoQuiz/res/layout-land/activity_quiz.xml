@@ -11,6 +11,14 @@
         android:layout_gravity="center_horizontal"
         android:padding="24dp" />
 
+    <Button
+        android:id="@+id/cheat_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cheat_button"
+        android:layout_gravity="bottom|center" >
+    </Button>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
