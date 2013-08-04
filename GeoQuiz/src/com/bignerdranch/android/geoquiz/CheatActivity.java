@@ -9,19 +9,19 @@ import android.widget.TextView;
 
 public class CheatActivity extends LoggingActivity {
 	
-	public static final String EXTRA_ANSWER_IS_TRUE = "com.bignerdranch.android.geoquiz.answer_is_true";
-	public static final String EXTRA_ANSWER_SHOWN = "com.bignerdranch.android.geoquiz.answer_shown";
+	public static final String QUESTION_KEY = TrueFalse.class.getCanonicalName();
 	
-	private boolean mAnswerIsTrue;
 	private TextView mAnswerTextView;
 	private Button mShowAnswerButton;
+	
+	private TrueFalse mQuestion;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_cheat);
 		
-		mAnswerIsTrue = getIntent().getBooleanExtra(EXTRA_ANSWER_IS_TRUE, false);
+		mQuestion =((TrueFalse) getIntent().getSerializableExtra(QUESTION_KEY));
 
 		mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
 		mShowAnswerButton = (Button) findViewById(R.id.show_answer_button);
@@ -29,15 +29,42 @@ public class CheatActivity extends LoggingActivity {
 		mShowAnswerButton.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				logDebug("mAnswerIsTrue: " + mAnswerIsTrue);
-				int message = mAnswerIsTrue ? R.string.true_button : R.string.false_button;
-				mAnswerTextView.setText(message);
+				logDebug("mAnswerIsTrue: " + mQuestion.isTrueQuestion());
 				
-				Intent result = new Intent(CheatActivity.this, QuizActivity.class);
-				result.putExtra(EXTRA_ANSWER_SHOWN, true);
-				setResult(RESULT_OK, result);
+				mQuestion.setCheated(true);
+				updateAnswer();
+				saveState();
 			}
 		});
 		
+	}
+	
+	void updateAnswer() {
+		if (mQuestion.isCheated()) {
+			int message = mQuestion.isTrueQuestion() ? R.string.true_button : R.string.false_button;
+			mAnswerTextView.setText(message);
+		}
+	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		outState.putSerializable(QUESTION_KEY, mQuestion);
+		saveState();
+	}
+
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		mQuestion = (TrueFalse) savedInstanceState.getSerializable(QUESTION_KEY);
+		logDebug("isCheated: " + mQuestion.isCheated());
+		updateAnswer();
+	}
+	
+	void saveState() {
+		Intent result = new Intent(CheatActivity.this, QuizActivity.class);
+		result.putExtra(QUESTION_KEY, mQuestion);
+		setResult(RESULT_OK, result);
+		logDebug("isCheated: " + mQuestion.isCheated());
 	}
 }

@@ -1,8 +1,5 @@
 package com.bignerdranch.android.geoquiz;
 
-import java.util.Arrays;
-import java.util.List;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,34 +11,20 @@ import android.widget.Toast;
 
 public class QuizActivity extends LoggingActivity {
 
-	private static final String CURRENT_INDEX_KEY = "currentIndex";
-
 	private Button mTrueButton;
 	private Button mFalseButton;
 	private Button mCheatButton;
 	private ImageButton mNextButton;
 	private ImageButton mPreviousButton;
 	private TextView mQuestionTextView;
-
-	private List<TrueFalse> mQuestionBank;
-	private TrueFalse mCurrentQuestion;
-	private int mCurrentIndex = 0;
 	
-	private boolean mIsCheater = false;
-
-	{
-		mQuestionBank = Arrays.asList(new TrueFalse(R.string.question_oceans,
-				true), new TrueFalse(R.string.question_mideast, false),
-				new TrueFalse(R.string.question_africas, false), new TrueFalse(
-						R.string.question_americas, true), new TrueFalse(
-						R.string.question_asia, true));
-	}
+	private QuizState quizState;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		logDebug("onCreate()");
 		setContentView(R.layout.activity_quiz);
+		setQuizState(new QuizState());
 
 		mTrueButton = (Button) findViewById(R.id.true_button);
 		mFalseButton = (Button) findViewById(R.id.false_button);
@@ -68,7 +51,7 @@ public class QuizActivity extends LoggingActivity {
 			@Override
 			public void onClick(View v) {
 				Intent cheatIntent = new Intent(QuizActivity.this, CheatActivity.class);
-				cheatIntent.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, mCurrentQuestion.isTrueQuestion());
+				cheatIntent.putExtra(CheatActivity.QUESTION_KEY, getQuizState().getCurrentQuestion());
 				startActivityForResult(cheatIntent, 0);
 			}
 		});
@@ -99,17 +82,15 @@ public class QuizActivity extends LoggingActivity {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		logDebug("onSaveInstanceState(Bundle)");
 		super.onSaveInstanceState(outState);
-		logDebug("mCurrentIndex: " + mCurrentIndex);
-		outState.putInt(CURRENT_INDEX_KEY, mCurrentIndex);
+		logDebug("mCurrentIndex: " + getQuizState().getCurrentIndex());
+		outState.putParcelable(QuizState.QUIZ_STATE_KEY, getQuizState());
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		logDebug("onRestoreInstanceState(Bundle)");
 		super.onRestoreInstanceState(savedInstanceState);
-		mCurrentIndex = savedInstanceState.getInt(CURRENT_INDEX_KEY, 0);
+		setQuizState((QuizState) savedInstanceState.getParcelable(QuizState.QUIZ_STATE_KEY));
 		updateQuestion();
 	}
 	
@@ -117,33 +98,31 @@ public class QuizActivity extends LoggingActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (data != null) {
-			mIsCheater = data.getExtras().getBoolean(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+			quizState.setCurrentQuestion((TrueFalse) data.getExtras().getSerializable(CheatActivity.QUESTION_KEY));
 		}
 	}
 
 	void nextQuestion() {
-		mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.size();
+		getQuizState().setCurrentIndex((getQuizState().getCurrentIndex() + 1) % getQuizState().getQuestionBank().size());
 		updateQuestion();
 	}
 
 	void previousQuestion() {
-		mCurrentIndex = (mCurrentIndex + mQuestionBank.size() - 1)
-				% mQuestionBank.size();
+		getQuizState().setCurrentIndex((getQuizState().getCurrentIndex() + getQuizState().getQuestionBank().size() - 1)
+				% getQuizState().getQuestionBank().size());
 		updateQuestion();
 	}
 
 	void updateQuestion() {
-		logDebug("mCurrentIndex: " + mCurrentIndex);
-		mCurrentQuestion = mQuestionBank.get(mCurrentIndex);
-		mQuestionTextView.setText(mCurrentQuestion.getQuestion());
-		mIsCheater = false;
+		logDebug("mCurrentIndex: " + getQuizState().getCurrentIndex());
+		mQuestionTextView.setText(getQuizState().getCurrentQuestion().getQuestion());
 	}
 
 	void checkAnswer(boolean userPressedTrue) {
-		boolean answerIsTrue = mCurrentQuestion.isTrueQuestion();
+		boolean answerIsTrue = getQuizState().getCurrentQuestion().isTrueQuestion();
 		int messageResId = 0;
 
-		if (mIsCheater) {
+		if (getQuizState().getCurrentQuestion().isCheated()) {
 			messageResId = R.string.judgment_toast;
 		} else if (userPressedTrue == answerIsTrue) {
 			messageResId = R.string.correct_toast;
@@ -160,6 +139,14 @@ public class QuizActivity extends LoggingActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.quiz, menu);
 		return true;
+	}
+
+	public QuizState getQuizState() {
+		return quizState;
+	}
+
+	public void setQuizState(final QuizState quizState) {
+		this.quizState = quizState;
 	}
 
 }
