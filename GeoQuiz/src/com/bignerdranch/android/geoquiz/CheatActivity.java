@@ -1,17 +1,20 @@
 package com.bignerdranch.android.geoquiz;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.TextView;
 
-public class CheatActivity extends LoggingActivity {
+
+import android.content.*;
+import android.os.*;
+import android.view.*;
+import android.view.View.*;
+import android.widget.*;
+
+public class CheatActivity extends LoggingActivity
+ {
 	
 	public static final String QUESTION_KEY = TrueFalse.class.getCanonicalName();
 	
 	private TextView mAnswerTextView;
+	private TextView mAndroidVersionTextView;
 	private Button mShowAnswerButton;
 	
 	private TrueFalse mQuestion;
@@ -24,6 +27,7 @@ public class CheatActivity extends LoggingActivity {
 		mQuestion =((TrueFalse) getIntent().getSerializableExtra(QUESTION_KEY));
 
 		mAnswerTextView = (TextView) findViewById(R.id.answer_text_view);
+		mAndroidVersionTextView = (TextView) findViewById(R.id.android_version_view);
 		mShowAnswerButton = (Button) findViewById(R.id.show_answer_button);
 		
 		mShowAnswerButton.setOnClickListener(new OnClickListener() {
@@ -32,18 +36,22 @@ public class CheatActivity extends LoggingActivity {
 				logDebug("mAnswerIsTrue: " + mQuestion.isTrueQuestion());
 				
 				mQuestion.setCheated(true);
-				updateAnswer();
+				updateDisplay();
 				saveState();
 			}
 		});
 		
+		updateDisplay();
+		
 	}
 	
-	void updateAnswer() {
+	void updateDisplay() {
 		if (mQuestion.isCheated()) {
 			int message = mQuestion.isTrueQuestion() ? R.string.true_button : R.string.false_button;
 			mAnswerTextView.setText(message);
 		}
+		
+		mAndroidVersionTextView.setText("API level " + Build.VERSION.SDK_INT);
 	}
 
 	@Override
@@ -58,7 +66,7 @@ public class CheatActivity extends LoggingActivity {
 		super.onRestoreInstanceState(savedInstanceState);
 		mQuestion = (TrueFalse) savedInstanceState.getSerializable(QUESTION_KEY);
 		logDebug("isCheated: " + mQuestion.isCheated());
-		updateAnswer();
+		updateDisplay();
 	}
 	
 	void saveState() {
