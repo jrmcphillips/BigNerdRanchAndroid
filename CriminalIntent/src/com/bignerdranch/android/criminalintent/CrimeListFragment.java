@@ -26,7 +26,7 @@ public class CrimeListFragment extends ListFragment {
 	
 	@Override
 	public void onListItemClick(ListView listView, View v, int position, long id) {
-		Crime crime = (Crime) getListAdapter().getItem(position);
+		Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
 		Log.i(this.getClass().getSimpleName(), "" + position);
 		Toast.makeText(getActivity(), "item: " + position, Toast.LENGTH_SHORT).show();
 		crime.setTitle(crime.isSolved() + "");
@@ -54,8 +54,8 @@ public class CrimeListFragment extends ListFragment {
 			TextView dateTextView = (TextView) convertView.findViewById(R.id.crime_list_item_date_text_view);
 			dateTextView.setText(crime.getDate().toString());
 			
-			CheckBox crimeCheckBox = (CheckBox) convertView.findViewById(R.id.crime_list_item_solved_check_box);
-			crimeCheckBox.setChecked(crime.isSolved());
+			CheckBox solvedCheckBox = (CheckBox) convertView.findViewById(R.id.crime_list_item_solved_check_box);
+			solvedCheckBox.setChecked(crime.isSolved());
 			
 			return convertView;
 		}
