@@ -50,4 +50,8 @@ public class Crime
 		return mId;
 	}
 	
+	@Override
+	public String toString() {
+		return mTitle;
+	}
 }
