@@ -30,9 +30,7 @@ public class CrimeListFragment extends ListFragment {
 		Log.i(this.getClass().getSimpleName(), "" + position);
 		Toast.makeText(getActivity(), "item: " + position, Toast.LENGTH_SHORT).show();
 		crime.setTitle(crime.isSolved() + "");
-	};
-	
-	
+	}
 	
 	private class CrimeAdapter extends ArrayAdapter<Crime> {
 		public CrimeAdapter(CrimeMap crimeMap) {
@@ -56,8 +54,8 @@ public class CrimeListFragment extends ListFragment {
 			TextView dateTextView = (TextView) convertView.findViewById(R.id.crime_list_item_date_text_view);
 			dateTextView.setText(crime.getDate().toString());
 			
-			TextView crimeCheckBox = (CheckBox) convertView.findViewById(R.id.crime_list_item_solved_check_box);
-			crimeCheckBox.setSelected(crime.isSolved());
+			CheckBox crimeCheckBox = (CheckBox) convertView.findViewById(R.id.crime_list_item_solved_check_box);
+			crimeCheckBox.setChecked(crime.isSolved());
 			
 			return convertView;
 		}
