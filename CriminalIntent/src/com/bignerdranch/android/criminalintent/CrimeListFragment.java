@@ -2,6 +2,7 @@ package com.bignerdranch.android.criminalintent;
 
 import android.support.v4.app.*;
 import android.os.*;
+import android.view.View;
 import android.widget.*;
 import android.util.*;
 import java.util.*;
@@ -23,7 +24,7 @@ public class CrimeListFragment extends ListFragment {
 	}
 	
 	@Override
-	public void onListItemClick(ListView listView, int position, long id) {
+	public void onListItemClick(ListView listView, View v, int position, long id) {
 		Crime crime = (Crime) getListAdapter().getItem(position);
 		Log.i(this.getClass().getSimpleName(), "" + position);
 		Toast.makeText(listView.getContext().getApplicationContext(), "item: " + position, Toast.LENGTH_SHORT).show();
