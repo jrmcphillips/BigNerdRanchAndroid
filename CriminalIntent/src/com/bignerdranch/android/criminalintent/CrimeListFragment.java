@@ -7,6 +7,7 @@ import android.widget.*;
 import android.util.*;
 import java.util.*;
 import android.view.*;
+import android.content.*;
 
 public class CrimeListFragment extends ListFragment {
 	private CrimeLab mCrimeLab;
@@ -29,7 +30,9 @@ public class CrimeListFragment extends ListFragment {
 		Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
 		Log.i(this.getClass().getSimpleName(), "" + position);
 		Toast.makeText(getActivity(), "item: " + position, Toast.LENGTH_SHORT).show();
-		crime.setTitle(crime.isSolved() + "");
+		Intent intent = new Intent(getActivity(), CrimeActivity.class);
+		intent.putExtra(CrimeFragment.CRIME_KEY, crime);
+		startActivity(intent);
 	}
 	
 	private class CrimeAdapter extends ArrayAdapter<Crime> {

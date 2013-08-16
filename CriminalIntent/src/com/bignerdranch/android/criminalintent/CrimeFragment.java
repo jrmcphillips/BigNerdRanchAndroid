@@ -14,34 +14,43 @@ public class CrimeFragment extends Fragment {
 	private Button mDateButton;
 	private CheckBox mSolvedCheckBox;
 	
+	public static final String CRIME_KEY = Crime.class.getCanonicalName();
+	
+	private CrimeFragment() {}
+	
+	public static final CrimeFragment newInstance(Crime crime) {
+		Bundle args = new Bundle();
+		args.putParcelable(CRIME_KEY, crime);
+		
+		CrimeFragment fragment = new CrimeFragment();
+		fragment.setArguments(args);
+		
+		return fragment;
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		mCrime = new Crime();
+		mCrime = getArguments().getParcelable(CRIME_KEY);
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_crime, parent, false);
 		mEditText = (EditText) view.findViewById(R.id.crime_title);
+		mEditText.setText(mCrime.getTitle());
+		
 		mEditText.addTextChangedListener(new TextWatcher() {
 
-				public void beforeTextChanged(CharSequence c, int start, int before, int after)
-				{
+				public void beforeTextChanged(CharSequence c, int start, int before, int after) {
 					mCrime.setTitle(c.toString());
 				}
 
-				public void onTextChanged(CharSequence p1, int p2, int p3, int p4)
-				{
-					// TODO: Implement this method
+				public void onTextChanged(CharSequence p1, int p2, int p3, int p4) {
 				}
 
-				public void afterTextChanged(Editable p1)
-				{
-					// TODO: Implement this method
+				public void afterTextChanged(Editable p1) {
 				}
-
-			
 		});
 		
 		mDateButton = (Button) view.findViewById(R.id.crime_date);
@@ -55,6 +64,8 @@ public class CrimeFragment extends Fragment {
 					mCrime.setSolved(isChecked);
 				}
 		});
+		
+		mSolvedCheckBox.setChecked(mCrime.isSolved());
 		
 		return view;
 	}
