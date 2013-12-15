@@ -2,6 +2,7 @@ package com.bignerdranch.android.criminalintent;
 
 import android.support.v4.app.*;
 import android.os.*;
+import android.util.Log;
 import android.view.*;
 import android.widget.*;
 import android.text.*;
@@ -13,10 +14,9 @@ public class CrimeFragment extends Fragment {
 	private EditText mEditText;
 	private Button mDateButton;
 	private CheckBox mSolvedCheckBox;
+	private CrimeLab mCrimeLab;
 	
 	public static final String CRIME_KEY = Crime.class.getCanonicalName();
-	
-	private CrimeFragment() {}
 	
 	public static final CrimeFragment newInstance(Crime crime) {
 		Bundle args = new Bundle();
@@ -31,7 +31,9 @@ public class CrimeFragment extends Fragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mCrimeLab = CrimeLab.get(getActivity());
 		mCrime = getArguments().getParcelable(CRIME_KEY);
+		mCrime = mCrimeLab.getCrime(mCrime.getId());
 	}
 	
 	@Override
@@ -62,6 +64,7 @@ public class CrimeFragment extends Fragment {
 		mSolvedCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 				public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 					mCrime.setSolved(isChecked);
+					Log.i(this.getClass().getSimpleName(), "setting crime to: " + isChecked);
 				}
 		});
 		
