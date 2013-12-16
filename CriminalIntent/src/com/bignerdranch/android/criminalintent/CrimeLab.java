@@ -1,11 +1,20 @@
 package com.bignerdranch.android.criminalintent;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import android.content.Context;
 
 public class CrimeLab {
     private static final CrimeLab sCrimeLab = new CrimeLab();
+
+    private Context mContext;
+
+    private final CrimeMap mCrimeMap = new CrimeMap();
+
+    private CrimeLab() {
+    }
 
     public static CrimeLab get(final Context context) {
         if (sCrimeLab.mContext == null) {
@@ -17,13 +26,6 @@ public class CrimeLab {
         }
 
         return sCrimeLab;
-    }
-
-    private Context mContext;
-
-    private final CrimeMap mCrimeMap = new CrimeMap();
-
-    private CrimeLab() {
     }
 
     public Crime getCrime(final UUID crimeId) {
@@ -42,5 +44,9 @@ public class CrimeLab {
 
             mCrimeMap.put(crime.getId(), crime);
         }
+    }
+
+    public List<Crime> getCrimeList() {
+        return new ArrayList<Crime>(mCrimeMap.values());
     }
 }
