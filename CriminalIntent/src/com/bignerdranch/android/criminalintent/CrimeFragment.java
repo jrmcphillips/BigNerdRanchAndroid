@@ -24,11 +24,14 @@ public class CrimeFragment extends Fragment {
 
     public static final String CRIME_KEY = Crime.class.getCanonicalName();
     private static final String DIALOG_DATE = "date";
+    private static final String DIALOG_TIME = "time";
     private static final int REQUEST_DATE = 0;
+    private static final int REQUEST_TIME = 1;
 
     private Crime mCrime;
     private EditText mEditText;
     private Button mDateButton;
+    private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
     private CrimeLab mCrimeLab;
 
@@ -60,7 +63,9 @@ public class CrimeFragment extends Fragment {
         mEditText.addTextChangedListener(new CrimeTitleTextWatcher());
 
         mDateButton = (Button) view.findViewById(R.id.crime_date);
+        mTimeButton = (Button) view.findViewById(R.id.crime_time);
         updateDate();
+        
         mDateButton.setOnClickListener(new View.OnClickListener() {
             
             @Override
@@ -69,6 +74,17 @@ public class CrimeFragment extends Fragment {
                 DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
                 dialog.show(fm, DIALOG_DATE);
+            }
+        });
+
+        mTimeButton.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
+                dialog.show(fm, DIALOG_TIME);
             }
         });
 
@@ -97,11 +113,19 @@ public class CrimeFragment extends Fragment {
             mCrime.setDate(date);
             updateDate();
         }
+        
+        if (requestCode == REQUEST_TIME) {
+            Date date = (Date)data.getSerializableExtra(TimePickerFragment.EXRA_TIME);
+            mCrime.setDate(date);
+            updateDate();
+        }
     }
     
     private void updateDate() {
         final String formattedDate = DateFormat.format("EEEE, MMMM dd, yyyy", mCrime.getDate()).toString();
+        final String formattedTime = DateFormat.format("hh:mm p", mCrime.getDate()).toString();
         mDateButton.setText(formattedDate);
+        mTimeButton.setText(formattedTime);
     }
 
     private class CrimeTitleTextWatcher implements TextWatcher {
