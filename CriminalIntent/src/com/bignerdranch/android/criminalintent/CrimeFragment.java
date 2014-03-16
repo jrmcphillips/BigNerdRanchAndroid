@@ -22,16 +22,21 @@ import android.widget.EditText;
 
 public class CrimeFragment extends Fragment {
 
+    public static final String EXRA_DATE = CrimeFragment.class.getCanonicalName();
     public static final String CRIME_KEY = Crime.class.getCanonicalName();
     private static final String DIALOG_DATE = "date";
     private static final String DIALOG_TIME = "time";
+    private static final String DIALOG_CHOICE = "date_time_choice";
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_TIME = 1;
+    public static final int RESULT_CANCELED = 0;
+    public static final int RESULT_OK = 1;
+    public static final int RESULT_DATE_CHOICE = 2;
+    public static final int RESULT_TIME_CHOICE = 3;
 
     private Crime mCrime;
     private EditText mEditText;
     private Button mDateButton;
-    private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
     private CrimeLab mCrimeLab;
 
@@ -63,7 +68,6 @@ public class CrimeFragment extends Fragment {
         mEditText.addTextChangedListener(new CrimeTitleTextWatcher());
 
         mDateButton = (Button) view.findViewById(R.id.crime_date);
-        mTimeButton = (Button) view.findViewById(R.id.crime_time);
         updateDate();
         
         mDateButton.setOnClickListener(new View.OnClickListener() {
@@ -71,20 +75,10 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 FragmentManager fm = getActivity().getSupportFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                 
+                DateTimeChoiceFragment dialog = DateTimeChoiceFragment.newInstance(mCrime.getDate());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
-                dialog.show(fm, DIALOG_DATE);
-            }
-        });
-
-        mTimeButton.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                TimePickerFragment dialog = TimePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME);
-                dialog.show(fm, DIALOG_TIME);
+                dialog.show(fm, DIALOG_CHOICE);
             }
         });
 
@@ -104,28 +98,33 @@ public class CrimeFragment extends Fragment {
     
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode != Activity.RESULT_OK) {
-            return;
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        Date date = (Date)data.getSerializableExtra(EXRA_DATE);
+        mCrime.setDate(date);
+        updateDate();
+        
+        switch (resultCode) {
+            case RESULT_CANCELED:
+                break;
+            case RESULT_OK:
+                break;
+            case RESULT_DATE_CHOICE:
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                dialog.setTargetFragment(this, REQUEST_DATE);
+                dialog.show(fm, DIALOG_DATE);
+                break;
+            case RESULT_TIME_CHOICE:
+                TimePickerFragment timePickerDialog = TimePickerFragment.newInstance(mCrime.getDate());
+                timePickerDialog.setTargetFragment(this, REQUEST_TIME);
+                timePickerDialog.show(fm, DIALOG_TIME);
+                break;
         }
         
-        if (requestCode == REQUEST_DATE) {
-            Date date = (Date)data.getSerializableExtra(DatePickerFragment.EXRA_DATE);
-            mCrime.setDate(date);
-            updateDate();
-        }
-        
-        if (requestCode == REQUEST_TIME) {
-            Date date = (Date)data.getSerializableExtra(TimePickerFragment.EXRA_TIME);
-            mCrime.setDate(date);
-            updateDate();
-        }
     }
     
     private void updateDate() {
-        final String formattedDate = DateFormat.format("EEEE, MMMM dd, yyyy", mCrime.getDate()).toString();
-        final String formattedTime = DateFormat.format("hh:mm p", mCrime.getDate()).toString();
+        final String formattedDate = DateFormat.format("hh:mm a EEEE, MMMM dd, yyyy", mCrime.getDate()).toString();
         mDateButton.setText(formattedDate);
-        mTimeButton.setText(formattedTime);
     }
 
     private class CrimeTitleTextWatcher implements TextWatcher {

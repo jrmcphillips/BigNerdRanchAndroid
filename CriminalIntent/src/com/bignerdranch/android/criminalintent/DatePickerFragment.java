@@ -16,14 +16,12 @@ import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 
 public class DatePickerFragment extends DialogFragment {
-
-    public static final String EXRA_DATE = DatePickerFragment.class.getCanonicalName();
     
     private Date mDate;
     
     public static DatePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();
-        args.putSerializable(EXRA_DATE, date);
+        args.putSerializable(CrimeFragment.EXRA_DATE, date);
         
         DatePickerFragment fragment = new DatePickerFragment();
         fragment.setArguments(args);
@@ -33,7 +31,7 @@ public class DatePickerFragment extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mDate = (Date) getArguments().getSerializable(EXRA_DATE);
+        mDate = (Date) getArguments().getSerializable(CrimeFragment.EXRA_DATE);
         
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
@@ -50,7 +48,7 @@ public class DatePickerFragment extends DialogFragment {
             @Override
             public void onDateChanged(DatePicker view, int year, int month, int day) {
                 mDate = new GregorianCalendar(year, month, day).getTime();
-                getArguments().putSerializable(EXRA_DATE, mDate);
+                getArguments().putSerializable(CrimeFragment.EXRA_DATE, mDate);
             }
             
         });
@@ -74,7 +72,7 @@ public class DatePickerFragment extends DialogFragment {
         }
         
         Intent i = new Intent();
-        i.putExtra(EXRA_DATE, mDate);
+        i.putExtra(CrimeFragment.EXRA_DATE, mDate);
         
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }

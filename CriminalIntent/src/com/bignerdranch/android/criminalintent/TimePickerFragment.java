@@ -2,7 +2,6 @@ package com.bignerdranch.android.criminalintent;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,20 +11,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.View;
-import android.widget.DatePicker;
-import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.TimePicker;
 import android.widget.TimePicker.OnTimeChangedListener;
 
 public class TimePickerFragment extends DialogFragment {
     
-    public static final String EXRA_TIME = TimePickerFragment.class.getCanonicalName();
-    
     private Date mDate;
     
     public static TimePickerFragment newInstance(Date date) {
         Bundle args = new Bundle();
-        args.putSerializable(EXRA_TIME, date);
+        args.putSerializable(CrimeFragment.EXRA_DATE, date);
         
         TimePickerFragment fragment = new TimePickerFragment();
         fragment.setArguments(args);
@@ -35,7 +30,7 @@ public class TimePickerFragment extends DialogFragment {
     
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        mDate = (Date) getArguments().getSerializable(EXRA_TIME);
+        mDate = (Date) getArguments().getSerializable(CrimeFragment.EXRA_DATE);
         
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
@@ -80,7 +75,7 @@ public class TimePickerFragment extends DialogFragment {
         }
         
         Intent i = new Intent();
-        i.putExtra(EXRA_TIME, mDate);
+        i.putExtra(CrimeFragment.EXRA_DATE, mDate);
         
         getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, i);
     }
