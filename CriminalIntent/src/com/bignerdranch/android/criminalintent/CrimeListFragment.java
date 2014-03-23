@@ -8,6 +8,7 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -65,10 +66,33 @@ public class CrimeListFragment extends ListFragment {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
     }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        boolean result = false;
+        
+        switch(item.getItemId()) {
+        case R.id.menu_item_new_crime:
+            Crime crime = new Crime();
+            mCrimeLab.addCrime(crime);
+            final Intent intent = newCrimePagerIntent(crime);
+            startActivityForResult(intent, 0);
+            break;
+        default:
+            result = super.onOptionsItemSelected(item);
+            break;
+        }
+        
+        return result;
+    }
 
     @Override
     public void onResume() {
         super.onResume();
+        refreshList();
+    }
+
+    private void refreshList() {
         ((CrimeAdapter) getListAdapter()).notifyDataSetChanged();
     }
 
@@ -77,8 +101,18 @@ public class CrimeListFragment extends ListFragment {
         final Crime crime = ((CrimeAdapter) getListAdapter()).getItem(position);
         Log.i(this.getClass().getSimpleName(), "" + position);
         Toast.makeText(getActivity(), "item: " + position, Toast.LENGTH_SHORT).show();
-        final Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
-        intent.putExtra(CrimeFragment.CRIME_KEY, crime);
+        final Intent intent = newCrimePagerIntent(crime);
         startActivity(intent);
     }
+    
+    Intent newCrimePagerIntent(Crime crime) {
+        final Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
+        intent.putExtra(CrimeFragment.CRIME_KEY, crime);
+        
+        return intent;
+    }
+    
+    
+    
+    
 }

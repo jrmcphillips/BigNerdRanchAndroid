@@ -21,10 +21,6 @@ public class CrimeLab {
             sCrimeLab.mContext = context.getApplicationContext();
         }
 
-        if (sCrimeLab.getCrimeMap().isEmpty()) {
-            sCrimeLab.loadDummyCrimes();
-        }
-
         return sCrimeLab;
     }
 
@@ -36,17 +32,12 @@ public class CrimeLab {
         return mCrimeMap;
     }
 
-    void loadDummyCrimes() {
-        for (int x = 0; x < 100; x++) {
-            final Crime crime = new Crime();
-            crime.setSolved(x % 2 == 0);
-            crime.setTitle("Crime #" + x + ": " + crime.isSolved());
-
-            mCrimeMap.put(crime.getId(), crime);
-        }
-    }
-
     public List<Crime> getCrimeList() {
         return new ArrayList<Crime>(mCrimeMap.values());
     }
+
+    public void addCrime(Crime crime) {
+        mCrimeMap.put(crime.getId(), crime);
+    }
+
 }
