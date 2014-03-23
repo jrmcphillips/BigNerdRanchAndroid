@@ -3,12 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ImageView
-        android:id="@+id/armstrong_on_moon"
-        android:src="@drawable/armstrong_on_moon" 
-        android:contentDescription="@string/hellomoon_description"
+    <VideoView
+        android:id="@+id/video_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:scaleType="centerInside"
         android:layout_weight="1"/>
     
@@ -21,19 +20,19 @@
             android:id="@+id/play_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hellomoon_play" />
+            android:text="@string/play_button" />
 
         <Button
             android:id="@+id/pause_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hellomoon_pause" />
+            android:text="@string/pause_button" />
 
         <Button
             android:id="@+id/stop_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/hellomoon_stop" />
+            android:text="@string/stop_button" />
     </TableRow>
 
 </TableLayout>
