@@ -8,17 +8,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.VideoView;
+import android.media.MediaPlayer;
 
 public class HelloMoonFragment extends Fragment {
 
-    private final Uri resourceUri = Uri.parse("android.resource://" + this.getClass().getPackage().getName() + "/" + R.raw.fruit_bat);
+    private final Uri resourceUri = Uri.parse(
+            "android.resource://" 
+            + this.getClass().getPackage().getName() + "/"
+            + R.raw.fruit_bat);
 
+    private VideoPlayer mPlayer= new VideoPlayer(resourceUri);
+    private VideoView mVideoView;
 
-    private VideoPlayer mPlayer;
-    
     private Button mPlayButton;
     private Button mPauseButton;
     private Button mStopButton;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -27,14 +37,19 @@ public class HelloMoonFragment extends Fragment {
         mPlayButton = (Button) view.findViewById(R.id.play_button);
         mPauseButton = (Button) view.findViewById(R.id.pause_button);
         mStopButton = (Button) view.findViewById(R.id.stop_button);
-        VideoView mVideoView = (VideoView) view.findViewById(R.id.video_view);
-        
+        mVideoView = (VideoView) view.findViewById(R.id.video_view);
 
         mPlayButton.setOnClickListener(new AudioPlayOnClickListener());
         mPauseButton.setOnClickListener(new AudioPauseOnClickListener());
         mStopButton.setOnClickListener(new AudioStopOnClickListener());
+
+        mVideoView = (VideoView) view.findViewById(R.id.video_view);
+        mVideoView.setOnCompletionListener(new OnCompletionListener());
         
-        mPlayer = new VideoPlayer(mVideoView, resourceUri);
+
+        if (mPlayer.isPaused()) {
+            mPlayer.play(mVideoView);
+        }
 
         return view;
     }
@@ -43,7 +58,7 @@ public class HelloMoonFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            mPlayer.play();
+            mPlayer.play(mVideoView);
         }
     }
 
@@ -51,7 +66,7 @@ public class HelloMoonFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            mPlayer.pause();
+            mPlayer.pause(mVideoView);
         }
     }
 
@@ -59,14 +74,31 @@ public class HelloMoonFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            mPlayer.stop();
+            mPlayer.stop(mVideoView);
         }
     }
 
+    class OnCompletionListener implements MediaPlayer.OnCompletionListener {
+
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            mPlayer.stop(mVideoView);
+        };
+
+    }
+    
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        if (mPlayer.isPlaying()) {
+            mPlayer.pause(mVideoView);
+        }
+    }
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPlayer.stop();
+        mPlayer.stop(mVideoView);
     }
 
 }
