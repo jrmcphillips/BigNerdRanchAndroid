@@ -1,8 +1,8 @@
 package com.bignerdranch.android.criminalintent;
 
 import java.util.Date;
+import java.util.UUID;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -43,7 +43,7 @@ public class CrimeFragment extends Fragment {
     
     public static final CrimeFragment newInstance(final Crime crime) {
         final Bundle args = new Bundle();
-        args.putParcelable(CRIME_KEY, crime);
+        args.putSerializable(CRIME_KEY, crime.getId());
 
         final CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
@@ -54,9 +54,9 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCrimeLab = CrimeLab.get(getActivity());
-        mCrime = getArguments().getParcelable(CRIME_KEY);
-        mCrime = mCrimeLab.getCrime(mCrime.getId());
+        mCrimeLab = CrimeLab.get();
+        UUID crimeId = (UUID) getArguments().getSerializable(CRIME_KEY);
+        mCrime = mCrimeLab.getCrime(crimeId);
     }
 
     @Override
@@ -130,11 +130,11 @@ public class CrimeFragment extends Fragment {
     private class CrimeTitleTextWatcher implements TextWatcher {
         @Override
         public void beforeTextChanged(final CharSequence c, final int start, final int before, final int after) {
-            mCrime.setTitle(c.toString());
         }
 
         @Override
         public void onTextChanged(final CharSequence p1, final int p2, final int p3, final int p4) {
+            mCrime.setTitle(p1.toString());
         }
 
         @Override

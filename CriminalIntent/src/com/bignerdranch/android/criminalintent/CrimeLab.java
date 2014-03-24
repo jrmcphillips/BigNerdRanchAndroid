@@ -1,43 +1,44 @@
 package com.bignerdranch.android.criminalintent;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import android.content.Context;
 
 public class CrimeLab {
     private static final CrimeLab sCrimeLab = new CrimeLab();
 
-    private Context mContext;
-
-    private final CrimeMap mCrimeMap = new CrimeMap();
+    private final CrimeList mCrimeList = new CrimeList();
 
     private CrimeLab() {
     }
 
-    public static CrimeLab get(final Context context) {
-        if (sCrimeLab.mContext == null) {
-            sCrimeLab.mContext = context.getApplicationContext();
-        }
-
+    public static CrimeLab get() {
         return sCrimeLab;
     }
 
     public Crime getCrime(final UUID crimeId) {
-        return mCrimeMap.get(crimeId);
-    }
-
-    public CrimeMap getCrimeMap() {
-        return mCrimeMap;
+        Crime crime = null;
+        for (Crime curCrime : mCrimeList) {
+            if (curCrime.getId().equals(crimeId)) {
+                crime = curCrime;
+            }
+        }
+        return crime;
     }
 
     public List<Crime> getCrimeList() {
-        return new ArrayList<Crime>(mCrimeMap.values());
+        return mCrimeList;
     }
 
     public void addCrime(Crime crime) {
-        mCrimeMap.put(crime.getId(), crime);
+        mCrimeList.add(crime);
+    }
+
+    public Crime get(int pos) {
+        return mCrimeList.get(pos);
+    }
+
+    public int size() {
+        return mCrimeList.size();
     }
 
 }

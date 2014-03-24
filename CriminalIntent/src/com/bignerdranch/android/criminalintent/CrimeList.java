@@ -1,6 +1,6 @@
 package com.bignerdranch.android.criminalintent;
-import java.util.*;
+import java.util.ArrayList;
 
-public class CrimeMap extends LinkedHashMap<UUID, Crime> {
+public class CrimeList extends ArrayList<Crime> {
 	private static final long serialVersionUID = 1L;
 }
