@@ -1,6 +1,5 @@
 package com.bignerdranch.android.criminalintent;
 
-import java.util.List;
 import java.util.UUID;
 
 import android.annotation.TargetApi;
@@ -16,42 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class CrimeListFragment extends ListFragment {
 
     private CrimeLab mCrimeLab;
     private boolean mSubtitleVisible = false;
-
-    private class CrimeAdapter extends ArrayAdapter<Crime> {
-
-        public CrimeAdapter(List<Crime> crimeList) {
-            super(getActivity(), R.layout.list_item_crime, crimeList);
-        }
-
-        @Override
-        public View getView(final int position, View convertView, final ViewGroup group) {
-            if (convertView == null) {
-                convertView = getActivity().getLayoutInflater().inflate(R.layout.list_item_crime, null);
-            }
-
-            final Crime crime = getItem(position);
-
-            final TextView titleTextView = (TextView) convertView.findViewById(R.id.crime_list_item_title_text_view);
-            titleTextView.setText(crime.getTitle());
-
-            final TextView dateTextView = (TextView) convertView.findViewById(R.id.crime_list_item_date_text_view);
-            dateTextView.setText(crime.getDate().toString());
-
-            final CheckBox solvedCheckBox = (CheckBox) convertView.findViewById(R.id.crime_list_item_solved_check_box);
-            solvedCheckBox.setChecked(crime.isSolved());
-
-            return convertView;
-        }
-    }
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -61,23 +30,23 @@ public class CrimeListFragment extends ListFragment {
         getActivity().setTitle(R.string.crimes_title);
 
         mCrimeLab = CrimeLab.get();
-        final CrimeAdapter crimeAdapter = new CrimeAdapter(mCrimeLab.getCrimeList());
+        final CrimeAdapter crimeAdapter = new CrimeAdapter(mCrimeLab.getCrimeList(), getActivity());
         setListAdapter(crimeAdapter);
-        
+
         setRetainInstance(true);
     }
-    
+
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = super.onCreateView(inflater, container, savedInstanceState);
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (mSubtitleVisible) {
                 getActivity().getActionBar().setSubtitle(R.string.subtitle);
             }
         }
-        
+
         return v;
     }
 
@@ -85,7 +54,7 @@ public class CrimeListFragment extends ListFragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list, menu);
-        
+
         MenuItem showSubtitle = menu.findItem(R.id.menu_item_show_subtitle);
         if (mSubtitleVisible && showSubtitle != null) {
             showSubtitle.setTitle(R.string.hide_subtitle);
