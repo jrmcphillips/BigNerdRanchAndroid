@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ListView;
 
 public class CrimeListFragment extends ListFragment {
@@ -39,15 +40,27 @@ public class CrimeListFragment extends ListFragment {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = super.onCreateView(inflater, container, savedInstanceState);
-
+        View view = inflater.inflate(R.layout.crime_list, container, false);
+        configureEmptyListButton(view);
+        
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (mSubtitleVisible) {
                 getActivity().getActionBar().setSubtitle(R.string.subtitle);
             }
         }
 
-        return v;
+        return view;
+    }
+
+    void configureEmptyListButton(View view) {
+        Button emptyListButton = (Button) view.findViewById(R.id.empty_list_button);
+        emptyListButton.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                addNewCrime();
+            }
+        });
     }
 
     @Override
@@ -67,10 +80,7 @@ public class CrimeListFragment extends ListFragment {
 
         switch (item.getItemId()) {
         case R.id.menu_item_new_crime:
-            Crime crime = new Crime();
-            mCrimeLab.addCrime(crime);
-            final Intent intent = newCrimePagerIntent(crime.getId());
-            startActivityForResult(intent, 0);
+            addNewCrime();
             result = true;
             break;
         case R.id.menu_item_show_subtitle:
@@ -83,6 +93,13 @@ public class CrimeListFragment extends ListFragment {
         }
 
         return result;
+    }
+    
+    void addNewCrime() {
+        Crime crime = new Crime();
+        mCrimeLab.addCrime(crime);
+        final Intent intent = newCrimePagerIntent(crime.getId());
+        startActivityForResult(intent, 0);
     }
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
