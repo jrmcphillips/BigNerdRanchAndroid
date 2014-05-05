@@ -1,12 +1,8 @@
 package com.bignerdranch.android.criminalintent;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
 
-import org.json.JSONException;
-
-import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
@@ -67,7 +63,6 @@ public class CrimeFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    @SuppressLint("NewApi")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup parent, final Bundle savedInstanceState) {

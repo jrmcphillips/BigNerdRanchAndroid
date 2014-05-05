@@ -96,7 +96,7 @@ public class Crime implements Parcelable, Jsonizable<Crime> {
         try {
             jsonObject = new JSONObject();
             jsonObject.put(JSON_ID, getId().toString());
-            jsonObject.put(JSON_TITLE, getTitle());
+            jsonObject.put(JSON_TITLE, getTitle() != null ? getTitle() : "");
             jsonObject.put(JSON_DATE, getDate().getTime());
             jsonObject.put(JSON_SOLVED, isSolved());
         } catch (JSONException ex) {
