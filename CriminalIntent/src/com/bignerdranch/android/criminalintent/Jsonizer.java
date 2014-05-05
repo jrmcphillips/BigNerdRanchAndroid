@@ -1,7 +1,11 @@
 package com.bignerdranch.android.criminalintent;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -16,8 +20,24 @@ import org.json.JSONArray;
 import org.json.JSONTokener;
 
 import android.content.Context;
+import android.os.Environment;
 
 public class Jsonizer<T extends Jsonizable<T>> {
+
+    File getJsonFile(Context context, String fileName) {
+        File fileDir = null;
+        
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            fileDir = context.getExternalFilesDir(null);
+        } else {
+            fileDir = context.getFilesDir();
+        }
+
+        File jsonFile = new File(fileDir, fileName);
+
+        return jsonFile;
+    }
+
     public void jsonize(Collection<T> jsonizables, Context context, String fileName) {
 
         JSONArray jsonArray = new JSONArray();
@@ -28,8 +48,10 @@ public class Jsonizer<T extends Jsonizable<T>> {
 
         Writer writer = null;
 
+        File jsonFile = getJsonFile(context, fileName);
+
         try {
-            OutputStream outputStream = context.openFileOutput(fileName, Context.MODE_PRIVATE);
+            OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(jsonFile));
             writer = new OutputStreamWriter(outputStream);
             writer.write(jsonArray.toString());
         } catch (Exception ex) {
@@ -49,14 +71,14 @@ public class Jsonizer<T extends Jsonizable<T>> {
         List<T> collection = new ArrayList<T>();
 
         BufferedReader reader = null;
+        InputStream inputStream = null;
+
+        File jsonFile = getJsonFile(context, fileName);
 
         try {
 
-            File filesDir = context.getFilesDir();
-            File jsonFile = new File(filesDir, fileName);
-
             if (jsonFile.exists()) {
-                InputStream inputStream = context.openFileInput(fileName);
+                inputStream = new BufferedInputStream(new FileInputStream(jsonFile));
                 reader = new BufferedReader(new InputStreamReader(inputStream));
                 StringBuilder jsonString = new StringBuilder();
 
@@ -80,6 +102,7 @@ public class Jsonizer<T extends Jsonizable<T>> {
             if (reader != null) {
                 try {
                     reader.close();
+                    inputStream.close();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
