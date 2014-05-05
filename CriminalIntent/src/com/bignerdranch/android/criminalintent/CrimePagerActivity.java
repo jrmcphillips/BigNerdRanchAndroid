@@ -19,7 +19,8 @@ public class CrimePagerActivity extends FragmentActivity {
         mViewPager = new ViewPager(this);
         mViewPager.setId(R.id.viewPager);
         setContentView(mViewPager);
-        mCrimeLab = CrimeLab.get();
+        mCrimeLab = CrimeLab.get(getApplicationContext());
+        
         mViewPager.setAdapter(new CrimePagerAdapter());
         mViewPager.setOnPageChangeListener(new CrimeOnPageChangeListener());
 

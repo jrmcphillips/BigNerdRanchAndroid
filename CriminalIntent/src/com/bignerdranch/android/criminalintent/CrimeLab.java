@@ -1,18 +1,40 @@
 package com.bignerdranch.android.criminalintent;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class CrimeLab {
-    private static final CrimeLab sCrimeLab = new CrimeLab();
+import android.content.Context;
 
-    private final CrimeList mCrimeList = new CrimeList();
+public class CrimeLab {
+    private static CrimeLab sCrimeLab;
+    private static final String FILE_NAME = "crimes.json";
+
+    private List<Crime> mCrimeList = new ArrayList<Crime>();
+    private Jsonizer<Crime> jsonizer = new Jsonizer<Crime>();
 
     private CrimeLab() {
     }
 
-    public static CrimeLab get() {
+    public static CrimeLab get(Context context)  {
+        if (sCrimeLab == null) {
+            sCrimeLab = new CrimeLab();
+            try {
+                sCrimeLab.loadCrimes(context);
+            } catch (Exception ex) {
+                throw new RuntimeException(ex);
+            }
+        }
+        
         return sCrimeLab;
+    }
+
+    public void loadCrimes(Context context) {
+        mCrimeList = jsonizer.unJsonize(Crime.class, context, FILE_NAME);
+    }
+
+    public void saveCrimes(Context context)  {
+        jsonizer.jsonize(mCrimeList, context, FILE_NAME);
     }
 
     public Crime getCrime(final UUID crimeId) {
@@ -22,6 +44,7 @@ public class CrimeLab {
                 crime = curCrime;
             }
         }
+
         return crime;
     }
 

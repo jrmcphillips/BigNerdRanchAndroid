@@ -1,7 +1,10 @@
 package com.bignerdranch.android.criminalintent;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.UUID;
+
+import org.json.JSONException;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -58,7 +61,7 @@ public class CrimeFragment extends Fragment {
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mCrimeLab = CrimeLab.get();
+        mCrimeLab = CrimeLab.get(getActivity());
         UUID crimeId = (UUID) getArguments().getSerializable(CRIME_KEY);
         mCrime = mCrimeLab.getCrime(crimeId);
         setHasOptionsMenu(true);
@@ -107,6 +110,16 @@ public class CrimeFragment extends Fragment {
         }
 
         return view;
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            mCrimeLab.saveCrimes(getActivity());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     @Override
