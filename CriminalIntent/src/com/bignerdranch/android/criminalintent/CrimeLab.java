@@ -5,10 +5,13 @@ import java.util.List;
 import java.util.UUID;
 
 import android.content.Context;
+import android.util.Log;
 
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
     private static final String FILE_NAME = "crimes.json";
+    
+    private final String TAG = this.getClass().getSimpleName();
 
     private List<Crime> mCrimeList = new ArrayList<Crime>();
     private Jsonizer<Crime> jsonizer = new Jsonizer<Crime>();
@@ -30,10 +33,12 @@ public class CrimeLab {
     }
 
     public void loadCrimes(Context context) {
+        Log.i(TAG, "loadCrimes");
         mCrimeList = jsonizer.unJsonize(Crime.class, context, FILE_NAME);
     }
 
     public void saveCrimes(Context context)  {
+        Log.i(TAG, "saveCrimes");
         jsonizer.jsonize(mCrimeList, context, FILE_NAME);
     }
 

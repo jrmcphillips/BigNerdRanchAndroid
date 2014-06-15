@@ -37,6 +37,8 @@ public class CrimeFragment extends Fragment {
     public static final int RESULT_OK = 1;
     public static final int RESULT_DATE_CHOICE = 2;
     public static final int RESULT_TIME_CHOICE = 3;
+    
+    private final String TAG = this.getClass().getSimpleName();
 
     private Crime mCrime;
     private EditText mEditText;
@@ -92,7 +94,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(final CompoundButton buttonView, final boolean isChecked) {
                 mCrime.setSolved(isChecked);
-                Log.i(this.getClass().getSimpleName(), "setting crime to: " + isChecked);
+                Log.i(TAG, "setting crime to: " + isChecked);
             }
         });
 

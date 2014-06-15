@@ -114,6 +114,16 @@ public class CrimeListFragment extends ListFragment {
 
         return view;
     }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        try {
+            mCrimeLab.saveCrimes(getActivity());
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+    }
 
     void configureEmptyListButton(View view) {
         Button emptyListButton = (Button) view.findViewById(R.id.empty_list_button);
