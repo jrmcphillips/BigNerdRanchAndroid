@@ -15,6 +15,8 @@ import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,6 +110,12 @@ public class CrimeFragment extends Fragment {
 
         return view;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime, menu);
+    }
     
     @Override
     public void onPause() {
@@ -150,6 +158,9 @@ public class CrimeFragment extends Fragment {
         super.onOptionsItemSelected(item);
 
         switch (item.getItemId()) {
+        case R.id.menu_item_new_crime:
+            addNewCrime();
+            break;
         case android.R.id.home:
             if (hasParentActivity()) {
                 NavUtils.navigateUpFromSameTask(getActivity());
@@ -158,6 +169,20 @@ public class CrimeFragment extends Fragment {
         }
 
         return true;
+    }
+
+    void addNewCrime() {
+        Crime crime = new Crime();
+        mCrimeLab.addCrime(crime);
+        final Intent intent = newCrimePagerIntent(crime.getId());
+        startActivity(intent);
+    }
+
+    Intent newCrimePagerIntent(UUID uuid) {
+        final Intent intent = new Intent(getActivity(), CrimePagerActivity.class);
+        intent.putExtra(CrimeFragment.CRIME_KEY, uuid);
+
+        return intent;
     }
 
     boolean hasParentActivity() {
