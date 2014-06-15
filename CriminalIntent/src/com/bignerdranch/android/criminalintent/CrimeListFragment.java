@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -18,7 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.AbsListView;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 
 public class CrimeListFragment extends ListFragment {
@@ -53,7 +56,61 @@ public class CrimeListFragment extends ListFragment {
         }
 
         ListView listView = (ListView) view.findViewById(android.R.id.list);
-        registerForContextMenu(listView);
+        
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.HONEYCOMB) {
+            // Use floating context menus on Froyo and Gingerbread
+            registerForContextMenu(listView);
+        } else {
+            // Use contextual action bar on Honeycomb and higher
+            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+                
+                @Override
+                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                    MenuInflater inflater = mode.getMenuInflater();
+                    inflater.inflate(R.menu.crime_list_item_context, menu);
+                    return true;
+                }
+                
+                @Override
+                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                    boolean success = false;
+
+                    switch (item.getItemId()) {
+                    case R.id.menu_item_delete_crime:
+                        CrimeAdapter adapter = (CrimeAdapter)getListAdapter();
+                        CrimeLab crimeLab = CrimeLab.get(getActivity());
+                        
+                        for (int i = adapter.getCount() - 1; i >= 0; i--) {
+                            if (getListView().isItemChecked(i)) {
+                                crimeLab.deleteCrime(adapter.getItem(i));
+                            }
+                        }
+                        
+                        mode.finish();
+                        adapter.notifyDataSetChanged();
+                        
+                        success = true;
+                        break;
+                    }
+                    
+                    return success;
+                }
+                
+                @Override
+                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                    return false;
+                }
+                
+                @Override
+                public void onDestroyActionMode(ActionMode mode) {
+                }
+                
+                @Override
+                public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                }
+            });
+        }
 
         return view;
     }
