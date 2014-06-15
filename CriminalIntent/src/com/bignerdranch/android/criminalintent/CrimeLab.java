@@ -55,6 +55,10 @@ public class CrimeLab {
     public void addCrime(Crime crime) {
         mCrimeList.add(crime);
     }
+    
+    public void deleteCrime(Crime crime) {
+        mCrimeList.remove(crime);
+    }
 
     public Crime get(int pos) {
         return mCrimeList.get(pos);

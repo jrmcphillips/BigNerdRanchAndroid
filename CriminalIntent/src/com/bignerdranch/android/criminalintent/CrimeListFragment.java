@@ -9,12 +9,15 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.Button;
 import android.widget.ListView;
 
@@ -42,12 +45,15 @@ public class CrimeListFragment extends ListFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.crime_list, container, false);
         configureEmptyListButton(view);
-        
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             if (mSubtitleVisible) {
                 getActivity().getActionBar().setSubtitle(R.string.subtitle);
             }
         }
+
+        ListView listView = (ListView) view.findViewById(android.R.id.list);
+        registerForContextMenu(listView);
 
         return view;
     }
@@ -55,7 +61,7 @@ public class CrimeListFragment extends ListFragment {
     void configureEmptyListButton(View view) {
         Button emptyListButton = (Button) view.findViewById(R.id.empty_list_button);
         emptyListButton.setOnClickListener(new View.OnClickListener() {
-            
+
             @Override
             public void onClick(View v) {
                 addNewCrime();
@@ -72,6 +78,33 @@ public class CrimeListFragment extends ListFragment {
         if (mSubtitleVisible && showSubtitle != null) {
             showSubtitle.setTitle(R.string.hide_subtitle);
         }
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        getActivity().getMenuInflater().inflate(R.menu.crime_list_item_context, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        int position = info.position;
+        CrimeAdapter adapter = (CrimeAdapter)getListAdapter();
+        Crime crime = adapter.getItem(position);
+        
+        boolean complete = false;
+
+        switch (item.getItemId()) {
+        case R.id.menu_item_delete_crime:
+            CrimeLab.get(getActivity()).deleteCrime(crime);
+            adapter.notifyDataSetChanged();
+            complete = true;
+            break;
+        default:
+            complete = super.onContextItemSelected(item);
+        }
+
+        return complete;
     }
 
     @Override
@@ -94,7 +127,7 @@ public class CrimeListFragment extends ListFragment {
 
         return result;
     }
-    
+
     void addNewCrime() {
         Crime crime = new Crime();
         mCrimeLab.addCrime(crime);
